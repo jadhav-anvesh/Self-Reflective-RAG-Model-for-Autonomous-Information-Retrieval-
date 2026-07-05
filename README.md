@@ -72,18 +72,25 @@ interface-based retrieval layer, and centralized configuration.
 
 **RAG Q&A** -- ask a question, get an answer with source citations:
 
-![RAG Workflow Q&A](docs/screenshots/qna-page.png)
+![RAG Workflow Q&A](
+<img width="1917" height="853" alt="Screenshot 2026-07-05 135116" src="https://github.com/user-attachments/assets/ed53575d-bc58-4496-b3b1-4e3fead4c96d" />
+)
 
 **Retrieval Debug Dashboard** -- trace exactly why a chunk was retrieved
 (semantic / BM25 / RRF / re-rank scores), plus the full chunk text:
 
-![Retrieval Debug Dashboard](docs/screenshots/retrieval-debug-dashboard.png)
-![Retrieval Debug Dashboard -- full chunk text](docs/screenshots/retrieval-debug-chunk-detail.png)
+![Retrieval Debug Dashboard](<img width="1917" height="856" alt="Screenshot 2026-07-05 135200" src="https://github.com/user-attachments/assets/f6837887-27fb-4097-9354-dd3bd8088daa" />
+)
+![Retrieval Debug Dashboard -- full chunk text](<img width="1917" height="856" alt="Screenshot 2026-07-05 135214" src="https://github.com/user-attachments/assets/0f61e922-187f-4e15-bee7-3e4fcee39b4a" />
+)
 
 **Evaluation Dashboard** -- deterministic metrics (latency, page recall,
 retries, low-confidence rate) with no LLM judge involved:
 
-![Evaluation Dashboard](docs/screenshots/evaluation-dashboard.png)
+![Evaluation Dashboard](<img width="1458" height="765" alt="image" src="https://github.com/user-attachments/assets/0c2f564a-64c8-4e69-9645-46b284821a77" />
+<img width="828" height="793" alt="image" src="https://github.com/user-attachments/assets/ea78991f-3406-4ae9-8e7c-949082474631" />
+
+)
 
 ## Project layout
 
