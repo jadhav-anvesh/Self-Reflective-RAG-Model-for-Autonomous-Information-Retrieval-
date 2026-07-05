@@ -73,15 +73,20 @@ interface-based retrieval layer, and centralized configuration.
 **RAG Q&A** -- ask a question, get an answer with source citations:
 
 ![RAG Workflow Q&A](
-<img width="1917" height="853" alt="Screenshot 2026-07-05 135116" src="https://github.com/user-attachments/assets/ed53575d-bc58-4496-b3b1-4e3fead4c96d" />
+<img width="1917" height="853" alt="Screenshot 2026-07-05 135116" src="https://github.com/user-attachments/assets/735007e0-1736-4900-87ea-e28541e5b769" />
+
 )
 
 **Retrieval Debug Dashboard** -- trace exactly why a chunk was retrieved
 (semantic / BM25 / RRF / re-rank scores), plus the full chunk text:
 
-![Retrieval Debug Dashboard](<img width="1917" height="856" alt="Screenshot 2026-07-05 135200" src="https://github.com/user-attachments/assets/f6837887-27fb-4097-9354-dd3bd8088daa" />
+![Retrieval Debug Dashboard](
+<img width="1917" height="856" alt="Screenshot 2026-07-05 135200" src="https://github.com/user-attachments/assets/d4927c1d-4e08-4934-a309-6fe5941a25c5" />
+
 )
-![Retrieval Debug Dashboard -- full chunk text](<img width="1917" height="856" alt="Screenshot 2026-07-05 135214" src="https://github.com/user-attachments/assets/0f61e922-187f-4e15-bee7-3e4fcee39b4a" />
+![Retrieval Debug Dashboard -- full chunk text](
+<img width="1917" height="856" alt="Screenshot 2026-07-05 135214" src="https://github.com/user-attachments/assets/7a49ab67-1e40-4ae1-ac0d-26b07670a5dc" />
+
 )
 
 **Evaluation Dashboard** -- deterministic metrics (latency, page recall,
