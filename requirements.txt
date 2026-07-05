@@ -1,0 +1,51 @@
+# ==============================================================================
+# Direct project dependencies only. Transitive dependencies (numpy, requests,
+# huggingface_hub, torch's nvidia-* packages, etc.) are deliberately NOT
+# pinned here -- pip resolves those automatically, and pinning them adds
+# maintenance burden without benefit.
+#
+# Version bounds below were chosen by resolving this exact dependency graph
+# with pip's real resolver (not guessed) and verified against a fresh
+# Python 3.11 virtual environment; see README.md "Dependency notes" for the
+# rationale behind each pin.
+# ==============================================================================
+
+# --- LangChain ecosystem -----------------------------------------------------
+# langchain==0.3.9 / langchain-community==0.3.8 are exact-pinned because they
+# must be released together (langchain-community tracks langchain's core
+# interfaces closely; mismatched patch lines are a common source of subtle
+# breakage). The others float within their compatible 0.x minor line.
+langchain==0.3.9
+langchain-core>=0.3.21,<0.4
+langchain-community==0.3.8
+langchain-text-splitters>=0.3.3,<0.4
+langchain-huggingface>=0.1.2,<0.2
+langchain-ollama>=0.2.0,<0.3
+langgraph>=0.2.53,<0.3
+
+# --- Vector store -------------------------------------------------------------
+chromadb>=0.5.20,<0.6
+
+# --- Embeddings / re-ranking ---------------------------------------------------
+sentence-transformers>=3.3.1,<4
+transformers>=4.46,<5
+torch>=2.5,<2.6
+
+# --- Retrieval / ingestion ------------------------------------------------------
+rank_bm25>=0.2.2,<0.3
+pymupdf>=1.24,<2
+
+# --- Schema validation (used directly for grader/router output schemas) ---------
+pydantic>=2.0,<3
+
+# --- UI -------------------------------------------------------------------------
+streamlit>=1.40,<2
+
+# --- Data handling / evaluation / benchmarking -----------------------------------
+pandas>=2.0,<3
+matplotlib>=3.9,<4
+
+# --- Testing ---------------------------------------------------------------------
+pytest>=8.0,<9
+
+tiktoken==0.8.0

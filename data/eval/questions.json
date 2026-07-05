@@ -1,0 +1,24 @@
+[
+  {
+    "question": "What is the requirement for a Bachelor in Business Administration?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  },
+  {
+    "question": "What courses are offered in the first semester?",
+    "ground_truth": null
+  },
+  {
+    "question": "What is the minimum attendance requirement?",
+    "ground_truth": null
+  },
+  {
+    "question": "How is the final grade calculated?",
+    "ground_truth": null
+  },
+  {
+    "question": "What are the eligibility criteria for admission?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  }
+]
