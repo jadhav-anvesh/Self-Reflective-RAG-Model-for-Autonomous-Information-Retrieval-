@@ -12,17 +12,8 @@ data/vectorstore/
 # Generated ingestion metadata
 data/manifest.json
 
-# Uploaded documents (users add their own PDFs)
-data/raw/
-
-# Evaluation & benchmark outputs
-results/
-
 # Environment
 .env
-
-# Streamlit
-.streamlit/
 
 # IDE
 .vscode/
