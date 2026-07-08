@@ -26,6 +26,8 @@ from __future__ import annotations
 
 import time
 
+from langchain_core.exceptions import OutputParserException
+
 from config import config
 from src.utils.logging_config import get_logger
 from src.workflow.citations import format_sources
@@ -84,6 +86,50 @@ def _normalize_binary_score(raw_score: str, *, context: str) -> bool:
     return False
 
 
+def _invoke_grader_safely(chain, inputs: dict, *, context: str):
+    """Invoke a structured-output grader chain, converting a parsing failure
+    into a clearly-logged `None` instead of an uncaught crash.
+
+    Root cause this guards against (see prompts.py for the full writeup):
+    with `method="json_schema"` a grader chain raises `OutputParserException`
+    -- rather than silently returning `None`, which is what the *previous*
+    default (`method="function_calling"`, on the pinned
+    `langchain-ollama<0.3`) did whenever llama3.2 responded with plain text
+    instead of actually invoking the bound grading tool. That silent `None`
+    was the direct cause of `AttributeError: 'NoneType' object has no
+    attribute 'binary_score'`.
+
+    `method="json_schema"` fixes the silent half of that bug, but a raised
+    exception with nothing to catch it would just crash the graph instead --
+    trading a silent data-corruption bug for an availability bug. This is
+    the catch point: log the *actual* parsing failure (previously
+    invisible), and return `None` so callers can route to their existing
+    fail-safe-negative handling, the same place an unrecognized label
+    already goes via `_normalize_binary_score`.
+
+    Args:
+        chain: A `prompt | llm.with_structured_output(...)` Runnable.
+        inputs: The dict passed to `chain.invoke(...)`.
+        context: Short label for logging (e.g. "hallucination grading").
+
+    Returns:
+        The parsed Pydantic object, or `None` if structured-output parsing
+        failed for any reason.
+    """
+    try:
+        return chain.invoke(inputs)
+    except OutputParserException as e:
+        logger.error(
+            "Structured-output parsing failed during %s -- the model likely "
+            "didn't produce schema-conforming output for this input. "
+            "Treating as a fail-safe negative grade rather than crashing. "
+            "Underlying error: %s",
+            context,
+            e,
+        )
+        return None
+
+
 def retrieve(state: GraphState, retriever) -> dict:
     """Retrieve documents relevant to the current question.
 
@@ -136,7 +182,15 @@ def grade_documents(state: GraphState) -> dict:
 
     filtered_docs = []
     for d in documents:
-        score = retrieval_grader.invoke({"question": question, "document": d.page_content})
+        score = _invoke_grader_safely(
+            retrieval_grader, {"question": question, "document": d.page_content}, context="document relevance grading"
+        )
+        if score is None:
+            # Fail-safe: treat an unparseable grade as "not relevant" and drop
+            # the chunk, same posture as an unrecognized label in
+            # _normalize_binary_score -- a chunk we can't confirm is relevant
+            # shouldn't be passed to generation.
+            continue
         is_relevant = _normalize_binary_score(score.binary_score, context="document relevance grading")
         logger.info(
             "Document grade = %r (relevant=%s) | page=%s source=%s",
@@ -232,12 +286,27 @@ def grade_generation_v_documents_and_question(state: GraphState) -> str:
         len(generation),
     )
     _hallucination_call_start = time.perf_counter()
-    score = hallucination_grader.invoke({"documents": formatted_docs, "generation": generation})
+    score = _invoke_grader_safely(
+        hallucination_grader,
+        {"documents": formatted_docs, "generation": generation},
+        context="hallucination grading",
+    )
     logger.info(
         "Hallucination grader returned in %.1fs: %r",
         time.perf_counter() - _hallucination_call_start,
         score,
     )
+    if score is None:
+        logger.error(
+            "Hallucination grader returned None.\n"
+            "Question: %r\n"
+            "Generation: %r\n"
+            "Context length: %d chars",
+            question,
+            generation,
+            len(formatted_docs),
+        )
+        return "retry_exhausted"
     is_grounded = _normalize_binary_score(score.binary_score, context="hallucination grading")
     logger.info(
         "Hallucination grade = %r (grounded=%s) | generation_attempts=%d/%d",
@@ -263,15 +332,25 @@ def grade_generation_v_documents_and_question(state: GraphState) -> str:
         return decision
 
     logger.info("---GRADE GENERATION VS QUESTION---")
-    answer_score = answer_grader.invoke({"question": question, "generation": generation})
-    is_useful = _normalize_binary_score(answer_score.binary_score, context="answer-usefulness grading")
-    logger.info(
-        "Answer-usefulness grade = %r (useful=%s) | query_rewrite_attempts=%d/%d",
-        answer_score.binary_score,
-        is_useful,
-        rewrite_attempts,
-        config.max_query_rewrites,
+    answer_score = _invoke_grader_safely(
+        answer_grader, {"question": question, "generation": generation}, context="answer-usefulness grading"
     )
+    if answer_score is None:
+        logger.warning(
+            "Answer grader failed to parse for question=%r; treating as fail-safe "
+            "'not useful' rather than crashing.",
+            question,
+        )
+        is_useful = False
+    else:
+        is_useful = _normalize_binary_score(answer_score.binary_score, context="answer-usefulness grading")
+        logger.info(
+            "Answer-usefulness grade = %r (useful=%s) | query_rewrite_attempts=%d/%d",
+            answer_score.binary_score,
+            is_useful,
+            rewrite_attempts,
+            config.max_query_rewrites,
+        )
 
     if is_useful:
         logger.info("Decision = useful (final answer)")

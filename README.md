@@ -143,32 +143,34 @@ The retrieval pipeline was benchmarked across **9 different chunk sizes** while 
 ### Chunk Size Benchmark
 
 | Chunk Size | Chunks | Retrieval (ms) | Workflow (ms) | Avg Page Recall |
-|------------|---------|---------------|--------------|----------------|
-|150|229|75.3|1290|0.366|
-|200|161|58.9|1717|0.410|
-|250|129|79.7|2478|0.405|
-|300|107|90.3|2072|0.339|
-|350|96|134.5|2676|0.379|
-|**400**|**90**|**129.5**|**2839**|**0.440**|
-|500|71|173.9|3140|0.398|
-|600|55|236.2|3432|0.353|
-|800|49|256.0|3572|0.353|
+| ---------- | ------ | -------------: | ------------: | --------------: |
+| 150        | 150    |         105.16 |       1438.00 |           0.542 |
+| 200        | 105    |         104.75 |       1675.83 |           0.567 |
+| **250**    | **83** |     **144.51** |   **2115.11** |       **0.581** |
+| 300        | 70     |         169.91 |       2511.06 |           0.549 |
+| 350        | 62     |         190.76 |       2849.14 |           0.549 |
+| 400        | 56     |         223.71 |       3362.68 |           0.558 |
+| 500        | 51     |         246.58 |       3516.44 |           0.546 |
+| 600        | 41     |         275.22 |       4213.59 |           0.593 |
+| 800        | 33     |         282.57 |       4442.26 |           0.558 |
 
+The production configuration uses a 250-token chunk size, selected as the best engineering trade-off between retrieval quality, latency and chunk count.
 ## Production Evaluation
 
-The final pipeline was evaluated on **51 manually curated questions**.
+The final pipeline was evaluated on **60 manually curated questions**.
 
-| Metric | Result |
-|---------|--------|
-|Questions Evaluated|51|
-|Average Retrieval Latency|125 ms|
-|Average Generation Latency|9.69 s|
-|Average Workflow Latency|9.82 s|
-|Average Page Recall|0.4075|
-|Retry Rate|43.14%|
-|Query Rewrite Rate|27.45%|
-|Low Confidence Rate|35.29%|
-|Average Citations per Answer|2.04|
+| Metric                       | Result   |
+| ---------------------------- | -------- |
+| Questions Evaluated          | 60       |
+| Average Retrieval Latency    | 133.9 ms |
+| Average Generation Latency   | 7.19 s   |
+| Average Workflow Latency     | 7.32 s   |
+| Average Page Recall          | 0.558    |
+| Retry Rate                   | 21.7%    |
+| Query Rewrite Rate           | 16.7%    |
+| Low Confidence Rate          | 11.7%    |
+| Average Citations per Answer | 3.33     |
+
 
 ## Benchmark Plots
 
@@ -329,26 +331,54 @@ already need.
 
 ```
 ----------------------------------------
-Question 49: What are all the situations in which a student's result may be kept on hold?
-  Retrieval Latency   103.6 ms
-  Generation Latency  17079.9 ms
-  Workflow Latency    17183.6 ms
+Question 54: Summarize all production considerations discussed for deploying a RAG system.
+  Retrieval Latency   119.9 ms
+  Generation Latency  12424.4 ms
+  Workflow Latency    12544.3 ms
   Retrieved Chunks    4 (4 reranked)
-  Page Recall         0.000
-  Retries             6 (query rewritten: True)
-  Low Confidence      True
-  Citations           1
+  Page Recall         0.500
+  Retries             2 (query rewritten: True)
+  Low Confidence      False
+  Citations           3
 ----------------------------------------
-Question 50: Explain the complete passing criteria, including grace marks and plagiarism cases.
-  Retrieval Latency   124.7 ms
-  Generation Latency  6533.8 ms
-  Workflow Latency    6658.5 ms
+Question 55: Describe all future improvements proposed for the project.
+  Retrieval Latency   122.8 ms
+  Generation Latency  8979.2 ms
+  Workflow Latency    9102.0 ms
   Retrieved Chunks    4 (4 reranked)
-  Page Recall         0.667
+  Page Recall         1.000
   Retries             0 (query rewritten: False)
   Low Confidence      False
+  Citations           4
+----------------------------------------
+Question 56: Explain the benchmark methodology, engineering evaluation, and limitations of the project.
+  Retrieval Latency   111.6 ms
+  Generation Latency  5420.9 ms
+  Workflow Latency    5532.6 ms
+  Retrieved Chunks    4 (4 reranked)
+  Page Recall         0.400
+  Retries             0 (query rewritten: False)
+  Low Confidence      False
+  Citations           4
+----------------------------------------
+Question 57: Compare the ingestion pipeline and the retrieval pipeline, highlighting the purpose of each stage.
+  Retrieval Latency   102.1 ms
+  Generation Latency  6849.8 ms
+  Workflow Latency    6951.9 ms
+  Retrieved Chunks    4 (4 reranked)
+  Page Recall         0.000
+  Retries             0 (query rewritten: False)
+  Low Confidence      False
+  Citations           3
+----------------------------------------
+Question 58: Who is the CEO of OpenAI?
+  Retrieval Latency   127.2 ms
+  Generation Latency  12937.2 ms
+  Workflow Latency    13064.4 ms
+  Retrieved Chunks    4 (4 reranked)
+  Retries             6 (query rewritten: True)
+  Low Confidence      True
   Citations           2
-
 Per-question results : results/evaluation_results.csv
 Summary               : results/evaluation_summary.json
 ```
@@ -378,8 +408,7 @@ page-recall/chunk-count charts, and the per-question table.
 ## Benchmarking (chunk size / embedding model sweeps)
 
 ```bash
-python benchmark.py --chunk-sizes 200 400 800
-python benchmark.py --embedding-models BAAI/bge-small-en-v1.5 intfloat/e5-base-v2
+python benchmark.py 
 ```
 
 For each configuration, ingests into an isolated, throwaway Chroma

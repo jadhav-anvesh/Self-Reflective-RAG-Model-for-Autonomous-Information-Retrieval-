@@ -46,11 +46,11 @@ class Config:
     """Immutable application configuration.
 
     Every field can be overridden with an environment variable of the
-    same name in upper snake case (e.g. RAG_CHUNK_SIZE=400).
+    same name in upper snake case (e.g. RAG_CHUNK_SIZE=250).
     """
 
     # --- Ingestion / chunking -------------------------------------------------
-    chunk_size: int = _env_int("RAG_CHUNK_SIZE", 400)
+    chunk_size: int = _env_int("RAG_CHUNK_SIZE", 250)
     chunk_overlap: int = _env_int("RAG_CHUNK_OVERLAP", 50)
 
     # --- Embeddings -------------------------------------------------------

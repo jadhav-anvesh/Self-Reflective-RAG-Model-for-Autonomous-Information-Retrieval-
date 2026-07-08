@@ -22,6 +22,20 @@ from src.workflow.query_cleaning import clean_rewritten_question
 # ---------------------------------------------------------------------------
 # Structured grading schemas
 # ---------------------------------------------------------------------------
+# IMPORTANT: `method="json_schema"` is explicit and load-bearing below, not
+# stylistic. The pinned `langchain-ollama>=0.2.0,<0.3` defaults
+# `with_structured_output()` to `method="function_calling"`, which binds the
+# schema as an Ollama *tool* and parses the result with
+# `PydanticToolsParser(first_tool_only=True)`. That parser's `parse_result()`
+# does `return tool_calls[0] if tool_calls else None` -- if llama3.2 responds
+# with plain text instead of actually invoking the bound tool (which local
+# models do intermittently, more so as context length/complexity grows), the
+# result is `None` with NO exception raised. That's the exact, verified
+# source of `AttributeError: 'NoneType' object has no attribute 'binary_score'`.
+# `method="json_schema"` instead uses Ollama's grammar-constrained `format`
+# parameter + `PydanticOutputParser`, which *raises* `OutputParserException`
+# on any failure to produce valid, schema-conforming output -- turning this
+# failure mode from a silent `None` into a loud, catchable exception.
 class GradeDocuments(BaseModel):
     """Binary score for relevance check on retrieved documents."""
 
@@ -58,17 +72,30 @@ llm = ChatOllama(
 # ---------------------------------------------------------------------------
 # Retrieval grader: is a retrieved chunk relevant to the question?
 # ---------------------------------------------------------------------------
-_retrieval_grader_system = """You are a grader assessing relevance of a retrieved document to a user question. \n
-    It does not need to be a stringent test. The goal is to filter out erroneous retrievals. \n
-    If the document contains keyword(s) or semantic meaning related to the user question, grade it as relevant. \n
-    Give a binary score 'yes' or 'no' score to indicate whether the document is relevant to the question."""
+_retrieval_grader_system = """You are evaluating whether a retrieved document should be kept for answer generation.
+
+Return "yes" if the document contains information that directly answers the question OR provides evidence needed to answer part of the question.
+
+Return "no" if the document:
+- is only loosely related,
+- mentions similar keywords without useful information,
+- contains only generic background,
+- or would not improve the final answer.
+
+A document does NOT need to answer the entire question.
+If it contributes useful evidence, return "yes".
+
+Respond only with:
+yes
+or
+no"""
 _retrieval_grader_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", _retrieval_grader_system),
         ("human", "Retrieved document: \n\n {document} \n\n User question: {question}"),
     ]
 )
-retrieval_grader = _retrieval_grader_prompt | llm.with_structured_output(GradeDocuments)
+retrieval_grader = _retrieval_grader_prompt | llm.with_structured_output(GradeDocuments, method="json_schema")
 
 # ---------------------------------------------------------------------------
 # Core RAG answer chain
@@ -79,25 +106,33 @@ rag_chain = rag_prompt | llm | StrOutputParser()
 # ---------------------------------------------------------------------------
 # Hallucination grader: is the generation grounded in retrieved documents?
 # ---------------------------------------------------------------------------
-_hallucination_grader_system = """Return "yes" if every important claim in the answer is supported by one or more retrieved documents.
+_hallucination_grader_system = """You are verifying whether an answer is fully supported by the retrieved documents.
 
-Accept:
-- paraphrasing
-- summarization
-- combining information from multiple retrieved documents
+Do NOT penalize answers for being shorter than the retrieved documents if every claim made is supported.
+Return "yes" ONLY if:
 
-Do NOT require the answer to exactly match the document wording.
+- every factual statement in the answer is supported by the retrieved documents,
+- no claim requires outside knowledge,
+- no entities, numbers, definitions or examples are invented,
+- no unsupported assumptions are introduced.
 
-Return "no" only if the answer:
-- introduces unsupported facts
-- invents numbers, policies, or entities
-- contradicts the retrieved documents
+Return "no" if:
 
-If the answer is conservative or omits some details, but everything it states is supported, return "yes".
+- even one factual claim lacks evidence,
+- the answer contradicts the retrieved documents,
+- the answer includes additional information not found in the retrieved documents,
+- the answer speculates or generalizes beyond the provided evidence.
 
-Return exactly one lowercase word:
+Minor wording differences and paraphrasing are acceptable.
+
+If you are uncertain, return "no".
+
+Respond with only:
+
 yes
+
 or
+
 no"""
 _hallucination_grader_prompt = ChatPromptTemplate.from_messages(
     [
@@ -105,35 +140,49 @@ _hallucination_grader_prompt = ChatPromptTemplate.from_messages(
         ("human", "Set of facts: \n\n {documents} \n\n LLM generation: {generation}"),
     ]
 )
-hallucination_grader = _hallucination_grader_prompt | llm.with_structured_output(GradeHallucinations)
-# hallucination_grader = (
-#     _hallucination_grader_prompt
-#     | llm
-#     | StrOutputParser()
-# )
+hallucination_grader = _hallucination_grader_prompt | llm.with_structured_output(
+    GradeHallucinations, method="json_schema"
+)
 
 # ---------------------------------------------------------------------------
 # Answer grader: does the generation actually answer the question?
 # ---------------------------------------------------------------------------
-_answer_grader_system = """Return yes if the answer directly addresses the user's question, even if concise.
+_answer_grader_system = """You are evaluating whether the generated answer sufficiently answers the user's question.
 
-Return no only if
+Return "yes" only if:
 
-- unrelated
-- incomplete
-- refuses without reason
+- the answer addresses every important part of the user's question,
+- all requested information is present,
+- the answer is supported by the retrieved documents,
+- the answer is specific rather than generic.
 
-Do not reject because wording differs.
+Return "no" if:
 
-Only output yes or no.
-Use lowercase only."""
+- any important part of the question is unanswered,
+- important information is missing,
+- the answer is vague or overly generic,
+- the answer avoids the question.
+
+Do NOT require perfect wording.
+
+Do NOT reject an answer simply because it is concise.
+
+If unsure, return "no".
+
+Respond only with:
+
+yes
+
+or
+
+no"""
 _answer_grader_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", _answer_grader_system),
         ("human", "User question: \n\n {question} \n\n LLM generation: {generation}"),
     ]
 )
-answer_grader = _answer_grader_prompt | llm.with_structured_output(GradeAnswer)
+answer_grader = _answer_grader_prompt | llm.with_structured_output(GradeAnswer, method="json_schema")
 
 # ---------------------------------------------------------------------------
 # Question rewriter: used when retrieved documents are all irrelevant

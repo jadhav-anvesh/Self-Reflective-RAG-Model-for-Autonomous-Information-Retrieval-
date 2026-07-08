@@ -1,277 +1,317 @@
 [
   {
-    "question": "What is the requirement for a Bachelor in Business Administration?",
+    "question": "What is data ingestion in a RAG pipeline?",
     "ground_truth": null,
-    "expected_pages": [8]
+    "expected_pages": [5]
   },
   {
-    "question": "What courses are offered in the first semester?",
+    "question": "What is OCR and when is it required?",
     "ground_truth": null,
-    "expected_pages": [45, 46]
+    "expected_pages": [5]
   },
   {
-    "question": "What is the minimum attendance requirement?",
+    "question": "What is PyMuPDF used for?",
     "ground_truth": null,
-    "expected_pages": []
+    "expected_pages": [5]
   },
   {
-    "question": "How is the final grade calculated?",
+    "question": "Why is chunk overlap important?",
     "ground_truth": null,
-    "expected_pages": [19, 25, 29, 30]
-  },
-    {
-    "question": "What are the eligibility criteria for admission?",
-    "ground_truth": null,
-    "expected_pages": [8]
+    "expected_pages": [5]
   },
   {
-    "question": "What is the eligibility criteria for Bachelor in Business Administration?",
+    "question": "What embedding model is used in the project?",
+    "ground_truth": null,
+    "expected_pages": [6]
+  },
+  {
+    "question": "Why are embeddings better than keyword representations?",
+    "ground_truth": null,
+    "expected_pages": [6]
+  },
+  {
+    "question": "Why is ChromaDB used in the system?",
+    "ground_truth": null,
+    "expected_pages": [6]
+  },
+  {
+    "question": "How does semantic search differ from BM25?",
     "ground_truth": null,
     "expected_pages": [7]
   },
   {
-    "question": "How long is the validity period of the BBA program?",
+    "question": "Why does the project combine semantic search and BM25?",
+    "ground_truth": null,
+    "expected_pages": [7]
+  },
+  {
+    "question": "What is Reciprocal Rank Fusion (RRF)?",
+    "ground_truth": null,
+    "expected_pages": [8, 27]
+  },
+
+  {
+    "question": "Why doesn't RRF use similarity scores directly?",
+    "ground_truth": null,
+    "expected_pages": [8, 27]
+  },
+  {
+    "question": "What is the purpose of the Cross-Encoder?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  },
+  {
+    "question": "Why is the Cross-Encoder only applied to the top retrieved documents?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  },
+  {
+    "question": "What is the role of document grading?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "When does the system rewrite a user's query?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "Why is query rewriting useful?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "How does answer generation ensure responses remain grounded in the uploaded document?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "What two checks are performed during self-reflection?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "What happens if the hallucination check fails?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+  {
+    "question": "What happens if the generated answer does not answer the user's question?",
+    "ground_truth": null,
+    "expected_pages": [9]
+  },
+
+  {
+    "question": "Why was LangGraph used instead of nested if-else statements?",
     "ground_truth": null,
     "expected_pages": [10]
   },
   {
-    "question": "Can a student enroll in two bachelor's programs simultaneously?",
+    "question": "What role does Streamlit play in the project?",
     "ground_truth": null,
-    "expected_pages": [7]
+    "expected_pages": [10]
   },
   {
-    "question": "What documents are required for provisional admission?",
-    "ground_truth": null,
-    "expected_pages": [7, 8, 9]
-  },
-  {
-    "question": "What happens if pending admission documents are not submitted?",
+    "question": "How does SHA-256 prevent duplicate document ingestion?",
     "ground_truth": null,
     "expected_pages": [8]
   },
   {
-    "question": "What is included in the student kit?",
+    "question": "What are the advantages of Self-RAG over Naive RAG?",
     "ground_truth": null,
-    "expected_pages": [8]
+    "expected_pages": [9]
   },
   {
-    "question": "What is the purpose of re-registration?",
+    "question": "Compare Naive RAG, Advanced RAG, Self-RAG, Agentic RAG, CRAG and GraphRAG.",
     "ground_truth": null,
-    "expected_pages": [11, 12]
+    "expected_pages": [9]
   },
   {
-    "question": "Can students skip semester re-registration?",
+    "question": "What production considerations are discussed for deploying a RAG system?",
     "ground_truth": null,
-    "expected_pages": [12]
+    "expected_pages": [9,10]
   },
   {
-    "question": "What happens if a student skips re-registration?",
+    "question": "Why are query embeddings generated at search time while document embeddings are generated only once?",
     "ground_truth": null,
-    "expected_pages": [12]
+    "expected_pages": [10]
   },
   {
-    "question": "Can students change from BBA to B.Com after admission?",
+    "question": "How can caching reduce the operational cost of a RAG system?",
     "ground_truth": null,
-    "expected_pages": [13]
+    "expected_pages": [10]
   },
   {
-    "question": "How many hours of live online sessions are conducted for each course?",
+    "question": "Why is metadata useful during retrieval?",
     "ground_truth": null,
-    "expected_pages": [15, 16]
+    "expected_pages": [10]
   },
   {
-    "question": "What facilities are available in the Student Zone?",
+    "question": "How can latency be reduced in a production RAG system?",
     "ground_truth": null,
-    "expected_pages": [16, 17, 18]
+    "expected_pages": [10]
+  },
+
+  {
+    "question": "What metrics were used to benchmark the project?",
+    "ground_truth": null,
+    "expected_pages": [15,16]
   },
   {
-    "question": "What is the medium of instruction?",
+    "question": "What benchmark configurations were compared?",
     "ground_truth": null,
-    "expected_pages": [18]
+    "expected_pages": [15,16]
   },
   {
-    "question": "How are Internal Assignments submitted?",
-    "ground_truth": null,
-    "expected_pages": [19, 20, 21]
-  },
-  {
-    "question": "Can assignments be submitted through email?",
-    "ground_truth": null,
-    "expected_pages": [19, 20]
-  },
-  {
-    "question": "What percentage of the final marks comes from Internal Assignments?",
+    "question": "Which configuration produced the best benchmark results?",
     "ground_truth": null,
     "expected_pages": [19]
   },
   {
-    "question": "What percentage comes from the Term End Examination?",
+    "question": "Why wasn't the fastest configuration selected?",
     "ground_truth": null,
-    "expected_pages": [25]
+    "expected_pages": [19]
   },
   {
-    "question": "What happens if plagiarism is detected in an assignment?",
+    "question": "What engineering metrics were collected for the production configuration?",
     "ground_truth": null,
-    "expected_pages": [24, 29, 30]
+    "expected_pages": [20]
   },
   {
-    "question": "How many assignment upload attempts are allowed?",
+    "question": "What does the retry rate indicate?",
     "ground_truth": null,
-    "expected_pages": [22, 23]
+    "expected_pages": [20]
   },
   {
-    "question": "What file format must assignments be submitted in?",
+    "question": "What does the low-confidence rate measure?",
     "ground_truth": null,
-    "expected_pages": [21]
+    "expected_pages": [20]
   },
   {
-    "question": "What is the maximum file size for assignment submission?",
+    "question": "What are the limitations of the benchmark evaluation?",
     "ground_truth": null,
-    "expected_pages": [21]
+    "expected_pages": [20]
   },
   {
-    "question": "Can handwritten assignments be submitted?",
+    "question": "Which future evaluation metrics are recommended?",
     "ground_truth": null,
-    "expected_pages": [21]
+    "expected_pages": [20]
+  },
+
+  {
+    "question": "Explain cosine similarity.",
+    "ground_truth": null,
+    "expected_pages": [26]
   },
   {
-    "question": "What is the passing criterion for a subject?",
+    "question": "Why do embeddings capture semantic meaning?",
     "ground_truth": null,
-    "expected_pages": [29, 30]
+    "expected_pages": [26]
   },
   {
-    "question": "Can students improve marks after passing a subject?",
+    "question": "What is Approximate Nearest Neighbor search?",
     "ground_truth": null,
-    "expected_pages": [26, 30]
+    "expected_pages": [26]
   },
   {
-    "question": "What is the Grace Rule?",
+    "question": "Explain the BM25 ranking formula.",
     "ground_truth": null,
-    "expected_pages": [31]
+    "expected_pages": [26]
   },
   {
-    "question": "When are regular Term End Examinations conducted?",
+    "question": "Explain Reciprocal Rank Fusion mathematically.",
     "ground_truth": null,
-    "expected_pages": [25, 26]
+    "expected_pages": [27]
   },
   {
-    "question": "When are Re-Sit examinations conducted?",
+    "question": "How does a Cross-Encoder differ from a Bi-Encoder?",
     "ground_truth": null,
-    "expected_pages": [31, 32, 33]
+    "expected_pages": [27]
   },
   {
-    "question": "Who is eligible for Re-Sit examinations?",
-    "ground_truth": null,
-    "expected_pages": [32, 33]
-  },
-  {
-    "question": "How long is the computer-based examination?",
+    "question": "Why can large chunks hurt retrieval performance?",
     "ground_truth": null,
     "expected_pages": [28]
   },
   {
-    "question": "What is the pattern of the computer-based examination?",
+    "question": "Why does chunk overlap improve retrieval?",
+    "ground_truth": null,
+    "expected_pages": [27]
+  },
+  {
+    "question": "Why can RAG systems still hallucinate?",
     "ground_truth": null,
     "expected_pages": [28]
   },
   {
-    "question": "How many MCQs are there in the exam?",
+    "question": "Why does hybrid retrieval generally outperform using only semantic search or BM25?",
     "ground_truth": null,
-    "expected_pages": [28]
+    "expected_pages": [29]
+  },
+
+  {
+    "question": "Summarize the complete document ingestion pipeline.",
+    "ground_truth": null,
+    "expected_pages": [5,6]
   },
   {
-    "question": "What items are prohibited inside the examination hall?",
+    "question": "Explain the complete question-answering workflow from user query to final response.",
     "ground_truth": null,
-    "expected_pages": [35, 36, 37]
+    "expected_pages": [7,8,9,10]
   },
   {
-    "question": "What happens if a student is caught using unfair means?",
+    "question": "Describe the entire self-reflection loop used in the project.",
     "ground_truth": null,
-    "expected_pages": [39, 40]
+    "expected_pages": [9,10]
   },
   {
-    "question": "How can students apply for revaluation?",
+    "question": "Compare semantic search, BM25 and Cross-Encoder reranking.",
     "ground_truth": null,
-    "expected_pages": [40, 41, 42]
+    "expected_pages": [7,8,27]
   },
   {
-    "question": "Under what condition is the revaluation fee refunded?",
+    "question": "Summarize all production considerations discussed for deploying a RAG system.",
     "ground_truth": null,
-    "expected_pages": [41, 42, 43]
+    "expected_pages": [9,10]
   },
   {
-    "question": "How can students obtain duplicate marksheets?",
+    "question": "Describe all future improvements proposed for the project.",
     "ground_truth": null,
-    "expected_pages": [44]
+    "expected_pages": [30,31,32]
   },
   {
-    "question": "How much does a transcript cost?",
+    "question": "Explain the benchmark methodology, engineering evaluation, and limitations of the project.",
     "ground_truth": null,
-    "expected_pages": [44, 45]
+    "expected_pages": [15,16,18,19,20]
   },
   {
-    "question": "What are the eligibility criteria for placement activities?",
+    "question": "Compare the ingestion pipeline and the retrieval pipeline, highlighting the purpose of each stage.",
     "ground_truth": null,
-    "expected_pages": [45, 46]
+    "expected_pages": [5,6,7,8,9,10]
   },
   {
-    "question": "How many interview opportunities are provided during placements?",
+    "question": "Who is the CEO of OpenAI?",
     "ground_truth": null,
-    "expected_pages": [46]
+    "expected_pages": []
   },
   {
-    "question": "What happens after receiving a job offer?",
+    "question": "What is the capital of Japan?",
     "ground_truth": null,
-    "expected_pages": [46]
+    "expected_pages": []
   },
   {
-    "question": "Explain the complete admission process from registration until receiving the study kit.",
+    "question": "Explain how the Transformer architecture works.",
     "ground_truth": null,
-    "expected_pages": [7, 8, 9, 10, 11]
+    "expected_pages": []
   },
   {
-    "question": "Describe the complete Internal Assignment submission workflow.",
+    "question": "What are the main differences between PostgreSQL and MySQL?",
     "ground_truth": null,
-    "expected_pages": [19, 20, 21, 22, 23, 24]
+    "expected_pages": []
   },
   {
-    "question": "Explain the complete examination process from exam registration to result declaration.",
+    "question": "Who won the FIFA World Cup in 2022?",
     "ground_truth": null,
-    "expected_pages": [26, 27, 28, 29, 30, 31, 40]
-  },
-  {
-    "question": "Summarize all plagiarism rules mentioned in the handbook.",
-    "ground_truth": null,
-    "expected_pages": [22, 24, 29, 30, 39, 40]
-  },
-  {
-    "question": "Explain how a student can fail even after scoring 50 marks in total.",
-    "ground_truth": null,
-    "expected_pages": [29, 30]
-  },
-  {
-    "question": "Compare Regular Term End Examinations and Re-Sit Examinations.",
-    "ground_truth": null,
-    "expected_pages": [26, 31, 32, 33]
-  },
-  {
-    "question": "Describe all facilities available through the Student Zone.",
-    "ground_truth": null,
-    "expected_pages": [16, 17, 18, 19]
-  },
-  {
-    "question": "What are all the situations in which a student's result may be kept on hold?",
-    "ground_truth": null,
-    "expected_pages": [8, 19, 26, 30]
-  },
-  {
-    "question": "Explain the complete passing criteria, including grace marks and plagiarism cases.",
-    "ground_truth": null,
-    "expected_pages": [29, 30, 31]
-  },
-  {
-    "question": "Summarize all examination hall rules and unfair means policies.",
-    "ground_truth": null,
-    "expected_pages": [35, 36, 37, 38, 39, 40]
+    "expected_pages": []
   }
 ]
