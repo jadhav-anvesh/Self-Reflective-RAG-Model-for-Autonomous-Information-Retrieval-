@@ -451,3 +451,7 @@ BM25 index persistence (fine at this corpus size), a `ChunkMetadata`
 model in place of dicts, per-request latency breakdown beyond what the
 debug dashboard already shows, agentic/graph RAG, fine-tuning, or a
 custom vector DB / distributed deployment.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
