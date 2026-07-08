@@ -1,4 +1,11 @@
-# RAG Project
+# Self-Reflective RAG for Autonomous Information Retrieval
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![LangChain](https://img.shields.io/badge/LangChain-0.3-green)
+![LangGraph](https://img.shields.io/badge/LangGraph-Workflow-orange)
+![Ollama](https://img.shields.io/badge/LLM-Ollama-red)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+A production-inspired Retrieval-Augmented Generation (RAG) system for document question answering using Hybrid Retrieval, Cross-Encoder Re-ranking, and a LangGraph-based self-reflective workflow.
 
 A self-reflective Retrieval-Augmented Generation pipeline (LangGraph +
 Chroma + Ollama), built in phases with production-style engineering
@@ -72,48 +79,106 @@ interface-based retrieval layer, and centralized configuration.
 
 **RAG Q&A** -- ask a question, get an answer with source citations:
 
-![RAG Workflow Q&A](
 <img width="1917" height="853" alt="Screenshot 2026-07-05 135116" src="https://github.com/user-attachments/assets/735007e0-1736-4900-87ea-e28541e5b769" />
 
-)
 
 **Retrieval Debug Dashboard** -- trace exactly why a chunk was retrieved
 (semantic / BM25 / RRF / re-rank scores), plus the full chunk text:
 
-![Retrieval Debug Dashboard](
 <img width="1917" height="856" alt="Screenshot 2026-07-05 135200" src="https://github.com/user-attachments/assets/d4927c1d-4e08-4934-a309-6fe5941a25c5" />
 
-)
-![Retrieval Debug Dashboard -- full chunk text](
 <img width="1917" height="856" alt="Screenshot 2026-07-05 135214" src="https://github.com/user-attachments/assets/7a49ab67-1e40-4ae1-ac0d-26b07670a5dc" />
 
-)
 
 **Evaluation Dashboard** -- deterministic metrics (latency, page recall,
 retries, low-confidence rate) with no LLM judge involved:
 
-![Evaluation Dashboard](<img width="1458" height="765" alt="image" src="https://github.com/user-attachments/assets/0c2f564a-64c8-4e69-9645-46b284821a77" />
+<img width="1458" height="765" alt="image" src="https://github.com/user-attachments/assets/0c2f564a-64c8-4e69-9645-46b284821a77" />
 <img width="828" height="793" alt="image" src="https://github.com/user-attachments/assets/ea78991f-3406-4ae9-8e7c-949082474631" />
 
-)
 
-## Project layout
+## Project Structure
 
 ```
-config.py                  Centralized, env-overridable configuration
-ingest.py                  Offline ingestion entry point (PDF -> chunks -> embeddings -> Chroma)
-main.py / app.py           Online entry points (CLI / Streamlit) -- load-only, never embed
-evaluate.py                Deterministic evaluation CLI entry point (offline, independent of the app)
-pages/                     Streamlit multipage nav (Retrieval Debug Dashboard, Evaluation Dashboard)
-src/
-  ingestion/                PDF loading, page-aware chunking, file hashing, manifest
-  indexing/                 Chroma vector store creation/loading (embeddings live here only)
-  retrieval/                Retriever interface + implementations (see below)
-  workflow/                 LangGraph nodes/graph/prompts for the self-reflective RAG loop
-  evaluation/                Dataset loading, real-workflow evaluation runner, deterministic metrics
-  utils/                    Shared logging config
-tests/                      Unit tests (pytest)
+.
+├── app.py
+├── benchmark.py
+├── evaluate.py
+├── ingest.py
+├── config.py
+│
+├── src/
+│   ├── ingestion/
+│   ├── indexing/
+│   ├── retrieval/
+│   ├── workflow/
+│   ├── evaluation/
+│   └── utils/
+│
+├── pages/
+│   ├── Retrieval_Debug_Dashboard.py
+│   └── Evaluation_Dashboard.py
+│
+├── data/
+│   ├── raw/
+│   └── eval/
+│
+├── results/
+│   ├── chunk_size_benchmark.csv
+│   ├── evaluation_results.csv
+│   ├── evaluation_summary.json
+│   └── plots/
+│
+├── docs/
+│   ├── RAG_Interview_Handbook.pdf
+│   ├── Benchmark_Report.pdf
+│   └── System_Architecture.pdf
+│
+└── tests/
 ```
+# Benchmark Results
+
+The retrieval pipeline was benchmarked across **9 different chunk sizes** while keeping the retrieval strategy, embedding model, LLM, and evaluation dataset fixed.
+
+### Chunk Size Benchmark
+
+| Chunk Size | Chunks | Retrieval (ms) | Workflow (ms) | Avg Page Recall |
+|------------|---------|---------------|--------------|----------------|
+|150|229|75.3|1290|0.366|
+|200|161|58.9|1717|0.410|
+|250|129|79.7|2478|0.405|
+|300|107|90.3|2072|0.339|
+|350|96|134.5|2676|0.379|
+|**400**|**90**|**129.5**|**2839**|**0.440**|
+|500|71|173.9|3140|0.398|
+|600|55|236.2|3432|0.353|
+|800|49|256.0|3572|0.353|
+
+## Production Evaluation
+
+The final pipeline was evaluated on **51 manually curated questions**.
+
+| Metric | Result |
+|---------|--------|
+|Questions Evaluated|51|
+|Average Retrieval Latency|125 ms|
+|Average Generation Latency|9.69 s|
+|Average Workflow Latency|9.82 s|
+|Average Page Recall|0.4075|
+|Retry Rate|43.14%|
+|Query Rewrite Rate|27.45%|
+|Low Confidence Rate|35.29%|
+|Average Citations per Answer|2.04|
+
+## Benchmark Plots
+
+### Retrieval Latency
+
+![Latency](results/plots/chunk_size_vs_latency.png)
+
+### Page Recall
+
+![Recall](results/plots/chunk_size_vs_page_recall.png)
 
 ## Setup
 
@@ -130,9 +195,7 @@ changed files get (re-)embedded.
 
 ## Add Your Documents
 
-This repository intentionally does not include any PDF documents --
-to avoid distributing copyrighted or personal files. Bring your own
-PDF(s) and place them here:
+Bring your own PDF(s) and place them here:
 
 ```
 data/raw/
@@ -196,19 +259,6 @@ composes this pipeline based on `config.py`:
 | `rerank_k`                     | `RAG_RERANK_K`               | `5`     | Final results returned after re-ranking |
 | `retrieval_k`                  | `RAG_RETRIEVAL_K`            | `4`     | Final results returned when re-ranking is off |
 
-**Why Reciprocal Rank Fusion (not score averaging):** BM25 scores and
-cosine similarity live on incomparable scales, so naively averaging or
-normalizing them is fragile. RRF instead fuses by *rank position*
-(`sum of 1 / (rrf_k + rank)` across retrievers), which is scale-agnostic
-and is what most production hybrid-search systems use.
-
-**Why the cross-encoder is optional and lazy-loaded:** cross-encoders
-score every `(query, candidate)` pair jointly, which is far more
-accurate than bi-encoder/BM25 similarity alone but too slow to run over
-a whole corpus. It's applied only as a final re-ranking pass over a
-small candidate pool (`rerank_candidate_k`), and the model weights are
-only loaded into memory the first time `config.use_reranking=True`
-actually triggers a call -- enabling it costs nothing until it's used.
 
 ## Metadata-aware retrieval
 
@@ -228,84 +278,8 @@ created_at    ISO timestamp of ingestion
 This is what makes PHASE 3 (source citations, e.g. "Page 12, input.pdf")
 a metadata lookup rather than a re-parse of the original PDF.
 
-## Metadata sanitization (ChromaDB insertion fix)
-
-Chroma raises `ValueError: Expected metadata value to be a str, int,
-float or bool, got None` for any metadata value outside that set --
-`section` in `src/ingestion/chunking.py` is legitimately `None` whenever
-no heading was detected on a page, and that alone was enough to abort
-the *entire* `add_documents()` batch (129 chunks built, zero stored).
-
-`src/utils/metadata.py` provides `sanitize_metadata(dict) -> dict` and
-`sanitize_documents_metadata(documents)`, applied automatically at both
-Chroma insertion points in `src/indexing/vectorstore.py`
-(`create_vectorstore` and `add_documents`) -- every document source
-(ingestion, benchmarking, future loaders) is covered without needing to
-remember to sanitize at the call site. Rules: `None` values are dropped,
-`str`/`int`/`float`/`bool` pass through unchanged, lists/tuples/sets of
-primitives are joined into a comma-separated string (so information like
-`tags=["a","b"]` survives as `tags="a, b"` instead of being discarded),
-and anything else (nested dicts, custom objects) is dropped.
-LangChain's own `filter_complex_metadata` was evaluated but not used in
-combination -- it only drops unsupported values outright with no attempt
-to preserve list content, and `sanitize_metadata` is a strict superset of
-what it does, so running both would be redundant.
-
-## Source citations
-
-Every answer comes with a de-duplicated list of `(filename, page[, section])`
-citations (`src/workflow/citations.py`), built from the metadata already
-attached at ingestion -- no re-parsing of the PDF needed. The `generate`
-workflow node populates `state["sources"]`, and `app.py` renders it under
-the answer as:
-
-```
-Answer: ...
-
-Sources:
-- input.pdf, Page 7
-- input.pdf, Page 12 (Admissions Requirements)
-```
-
-## Retrieval debug dashboard
-
-`pages/1_Retrieval_Debug_Dashboard.py` is a second Streamlit page
-(auto-discovered by Streamlit's multipage nav when you run
-`streamlit run app.py`) that traces a question through the retrieval
-pipeline in isolation -- no LLM generation, just retrieval:
-
-```
-question -> semantic candidates -> BM25 candidates
-         -> RRF fusion -> [cross-encoder re-ranking] -> final chunks
-```
-
-It shows a table of the final chunks with whichever per-stage scores
-were computed (semantic similarity, BM25, RRF, cross-encoder), plus
-retrieval latency and full chunk text. This is powered by
-`BaseRetriever.retrieve_with_diagnostics()`, which every retriever
-implements (`RetrievedChunk` in `src/retrieval/base.py`) -- the
-LangGraph workflow still only ever calls the plain `.retrieve()`, so
-none of this changes production behavior.
 
 ## Evaluation
-
-A **deterministic, offline evaluation layer** -- it does not modify
-retrieval, the LangGraph workflow, ChromaDB, or the Streamlit chat app.
-It builds the exact same retriever and compiled workflow those use
-(`get_retriever` + `create_workflow`) and runs each question through
-them, measuring latency, chunk/citation counts, retries, and page
-recall directly from the pipeline's own output.
-
-**No LLM is used as a judge.** An earlier version of this project used
-RAGAS (LLM-judged faithfulness/answer-relevancy/context-precision/recall),
-but with a small local model (llama3.2 via Ollama) as the judge, RAGAS's
-own judge calls regularly failed with `OutputParserException`s (the judge
-not returning strict JSON), `TimeoutError`s, and NaN scores -- failures
-inside the evaluation framework itself, not inside the RAG pipeline being
-measured. This project now measures only things that can be counted or
-timed, which a local model can't get "wrong": nothing here can produce a
-parsing failure, a timeout, or a NaN. See "Why deterministic over
-LLM-judged" below for the full reasoning.
 
 ```
 src/evaluation/
@@ -354,34 +328,26 @@ already need.
 ### 3. Sample output
 
 ```
-Question 1: What font should assignments use?
-  Retrieval Latency   42.3 ms
-  Generation Latency  612.5 ms
-  Workflow Latency    654.8 ms
+----------------------------------------
+Question 49: What are all the situations in which a student's result may be kept on hold?
+  Retrieval Latency   103.6 ms
+  Generation Latency  17079.9 ms
+  Workflow Latency    17183.6 ms
   Retrieved Chunks    4 (4 reranked)
-  Page Recall         1.000
-  Retries             0 (query rewritten: False)
-  Low Confidence      False
+  Page Recall         0.000
+  Retries             6 (query rewritten: True)
+  Low Confidence      True
   Citations           1
 ----------------------------------------
-Question 2: What is the requirement for a Bachelor in Business Administration?
-  Retrieval Latency   47.1 ms
-  Generation Latency  1188.4 ms
-  Workflow Latency    1235.5 ms
+Question 50: Explain the complete passing criteria, including grace marks and plagiarism cases.
+  Retrieval Latency   124.7 ms
+  Generation Latency  6533.8 ms
+  Workflow Latency    6658.5 ms
   Retrieved Chunks    4 (4 reranked)
-  Page Recall         1.000
-  Retries             1 (query rewritten: False)
+  Page Recall         0.667
+  Retries             0 (query rewritten: False)
   Low Confidence      False
   Citations           2
-----------------------------------------
-
-=== Average metrics (across all scored questions) ===
-Avg Retrieval Latency   44.7 ms
-Avg Generation Latency  900.5 ms
-Avg Workflow Latency    945.2 ms
-Avg Page Recall         1.000 (over 2 question(s) with `expected_pages` set)
-Retry Rate              50.0%
-Low Confidence Rate     0.0%
 
 Per-question results : results/evaluation_results.csv
 Summary               : results/evaluation_summary.json
@@ -395,36 +361,6 @@ Length, Retries, Low Confidence, Query Rewritten, Sources.
 manifest (timestamp, question count, LLM/embedding/retrieval config
 used) -- useful for comparing runs after a retrieval or prompt change.
 
-### 4. Metrics explained
-
-| Metric | What it measures | How it's captured |
-|---|---|---|
-| **Retrieval Latency** | Time for the retriever alone (hybrid fusion + optional re-ranking) to return results. | Timed around a standalone `retriever.retrieve_with_diagnostics()` call. |
-| **Generation Latency** | Approximate time spent generating (workflow latency minus the retrieval sample above). An estimate, not an exact instrumentation of the LangGraph nodes -- see `evaluator.py`'s docstring for why. | `workflow_latency - retrieval_latency`, floored at 0. |
-| **Workflow Latency** | Total time for the full self-reflective loop (`app.invoke()`), including any retries/rewrites. | Timed around the compiled workflow's `.invoke()` call. |
-| **Retrieved / Reranked Chunks** | How many chunks the retriever returned, and how many of those went through cross-encoder scoring. | From `RetrievedChunk.rerank_score is not None` on the retriever's diagnostics output. |
-| **Page Recall** | `\|retrieved_pages ∩ expected_pages\| / \|expected_pages\|` for this question. | Only computed for questions with `expected_pages` set; `None` otherwise. |
-| **Retries / Query Rewritten** | How many times the self-reflective loop retried generation or rewrote the query before accepting an answer. | From `generation_attempts`/`query_rewrite_attempts` in the workflow's final state. |
-| **Low Confidence** | Whether the retry budget was exhausted before grading actually passed (see the workflow's `accept_best_effort` node). | From `low_confidence` in the workflow's final state. |
-| **Citations / Duplicates Removed** | How many de-duplicated sources the answer cites, and how many raw document-level citations collapsed into those. | From `state["sources"]` vs. `state["documents"]`. |
-
-### Why deterministic over LLM-judged
-
-RAGAS-style metrics (faithfulness, answer relevancy, etc.) are valuable
-*in principle*, but they require a second LLM call per metric per
-question to actually judge the answer -- and that judge has to reliably
-return structured (JSON) output. Hosted frontier models are decent at
-this; a small local model run through Ollama, quantized for CPU/limited-
-GPU inference, is not: it periodically ignores the requested output
-format, runs slowly enough to time out under any real concurrency, and
-when it *does* fail, RAGAS itself has no good way to distinguish "the
-RAG pipeline gave a bad answer" from "the judge model didn't format its
-opinion correctly." For a project whose whole premise is running fully
-offline on local models, adding a *second* fragile local-LLM dependency
-just to grade the first one is the wrong trade -- especially since
-almost everything an LLM judge would tell you (is retrieval finding the
-right pages? is the pipeline fast? is self-reflection kicking in often?)
-is already directly measurable without asking a model's opinion at all.
 
 ### Optional: Streamlit dashboard
 
