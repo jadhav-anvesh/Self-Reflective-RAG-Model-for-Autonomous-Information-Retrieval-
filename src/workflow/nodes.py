@@ -24,6 +24,8 @@ than the thing actually stopping the loop.
 """
 from __future__ import annotations
 
+import time
+
 from config import config
 from src.utils.logging_config import get_logger
 from src.workflow.citations import format_sources
@@ -224,7 +226,18 @@ def grade_generation_v_documents_and_question(state: GraphState) -> str:
     rewrite_attempts = state.get("query_rewrite_attempts", 0)
 
     formatted_docs = "\n\n".join(doc.page_content for doc in documents)
+    logger.info(
+        "Calling hallucination grader | context_length=%d chars | generation_length=%d chars",
+        len(formatted_docs),
+        len(generation),
+    )
+    _hallucination_call_start = time.perf_counter()
     score = hallucination_grader.invoke({"documents": formatted_docs, "generation": generation})
+    logger.info(
+        "Hallucination grader returned in %.1fs: %r",
+        time.perf_counter() - _hallucination_call_start,
+        score,
+    )
     is_grounded = _normalize_binary_score(score.binary_score, context="hallucination grading")
     logger.info(
         "Hallucination grade = %r (grounded=%s) | generation_attempts=%d/%d",

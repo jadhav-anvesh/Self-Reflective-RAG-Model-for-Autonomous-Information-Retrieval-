@@ -50,12 +50,12 @@ class Config:
     """
 
     # --- Ingestion / chunking -------------------------------------------------
-    chunk_size: int = _env_int("RAG_CHUNK_SIZE", 250)
+    chunk_size: int = _env_int("RAG_CHUNK_SIZE", 400)
     chunk_overlap: int = _env_int("RAG_CHUNK_OVERLAP", 50)
 
     # --- Embeddings -------------------------------------------------------
     embedding_model: str = _env_str("RAG_EMBEDDING_MODEL", "BAAI/bge-small-en-v1.5")
-    embedding_device: str = _env_str("RAG_EMBEDDING_DEVICE", "cpu")
+    embedding_device: str = _env_str("RAG_EMBEDDING_DEVICE", "cuda")
 
     # --- LLM ----------------------------------------------------------------
     llm_model: str = _env_str("RAG_LLM_MODEL", "llama3.2")
@@ -78,7 +78,7 @@ class Config:
     rrf_k: int = _env_int("RAG_RRF_K", 60)
 
     # --- PHASE 2: Cross-encoder re-ranking (optional) -------------------------
-    use_reranking: bool = _env_str("RAG_USE_RERANKING", "false").lower() == "true"
+    use_reranking: bool = _env_str("RAG_USE_RERANKING", "true").lower() == "true"
     reranker_model: str = _env_str("RAG_RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
     # Pipeline: retriever -> top `rerank_candidate_k` -> cross-encoder -> top `rerank_k` -> LLM
     rerank_candidate_k: int = _env_int("RAG_RERANK_CANDIDATE_K", 20)
@@ -97,10 +97,10 @@ class Config:
     # grader marked the previous generation as not grounded in the retrieved
     # documents. After this many attempts, the loop accepts the last
     # generation instead of retrying forever (see grade_generation_v_documents_and_question).
-    max_hallucination_retries: int = _env_int("RAG_MAX_HALLUCINATION_RETRIES", 2)
+    max_hallucination_retries: int = _env_int("RAG_MAX_HALLUCINATION_RETRIES", 5)
     # Max times `transform_query` is allowed to re-run, whether triggered by
     # "no relevant documents" or "generation didn't address the question".
-    max_query_rewrites: int = _env_int("RAG_MAX_QUERY_REWRITES", 2)
+    max_query_rewrites: int = _env_int("RAG_MAX_QUERY_REWRITES", 5)
 
     # --- Ingestion bookkeeping ------------------------------------------------
     manifest_path: str = str(MANIFEST_PATH)

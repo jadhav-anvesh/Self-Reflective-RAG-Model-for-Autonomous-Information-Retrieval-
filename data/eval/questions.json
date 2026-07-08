@@ -6,19 +6,272 @@
   },
   {
     "question": "What courses are offered in the first semester?",
-    "ground_truth": null
+    "ground_truth": null,
+    "expected_pages": [45, 46]
   },
   {
     "question": "What is the minimum attendance requirement?",
-    "ground_truth": null
+    "ground_truth": null,
+    "expected_pages": []
   },
   {
     "question": "How is the final grade calculated?",
-    "ground_truth": null
+    "ground_truth": null,
+    "expected_pages": [19, 25, 29, 30]
   },
-  {
+    {
     "question": "What are the eligibility criteria for admission?",
     "ground_truth": null,
     "expected_pages": [8]
+  },
+  {
+    "question": "What is the eligibility criteria for Bachelor in Business Administration?",
+    "ground_truth": null,
+    "expected_pages": [7]
+  },
+  {
+    "question": "How long is the validity period of the BBA program?",
+    "ground_truth": null,
+    "expected_pages": [10]
+  },
+  {
+    "question": "Can a student enroll in two bachelor's programs simultaneously?",
+    "ground_truth": null,
+    "expected_pages": [7]
+  },
+  {
+    "question": "What documents are required for provisional admission?",
+    "ground_truth": null,
+    "expected_pages": [7, 8, 9]
+  },
+  {
+    "question": "What happens if pending admission documents are not submitted?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  },
+  {
+    "question": "What is included in the student kit?",
+    "ground_truth": null,
+    "expected_pages": [8]
+  },
+  {
+    "question": "What is the purpose of re-registration?",
+    "ground_truth": null,
+    "expected_pages": [11, 12]
+  },
+  {
+    "question": "Can students skip semester re-registration?",
+    "ground_truth": null,
+    "expected_pages": [12]
+  },
+  {
+    "question": "What happens if a student skips re-registration?",
+    "ground_truth": null,
+    "expected_pages": [12]
+  },
+  {
+    "question": "Can students change from BBA to B.Com after admission?",
+    "ground_truth": null,
+    "expected_pages": [13]
+  },
+  {
+    "question": "How many hours of live online sessions are conducted for each course?",
+    "ground_truth": null,
+    "expected_pages": [15, 16]
+  },
+  {
+    "question": "What facilities are available in the Student Zone?",
+    "ground_truth": null,
+    "expected_pages": [16, 17, 18]
+  },
+  {
+    "question": "What is the medium of instruction?",
+    "ground_truth": null,
+    "expected_pages": [18]
+  },
+  {
+    "question": "How are Internal Assignments submitted?",
+    "ground_truth": null,
+    "expected_pages": [19, 20, 21]
+  },
+  {
+    "question": "Can assignments be submitted through email?",
+    "ground_truth": null,
+    "expected_pages": [19, 20]
+  },
+  {
+    "question": "What percentage of the final marks comes from Internal Assignments?",
+    "ground_truth": null,
+    "expected_pages": [19]
+  },
+  {
+    "question": "What percentage comes from the Term End Examination?",
+    "ground_truth": null,
+    "expected_pages": [25]
+  },
+  {
+    "question": "What happens if plagiarism is detected in an assignment?",
+    "ground_truth": null,
+    "expected_pages": [24, 29, 30]
+  },
+  {
+    "question": "How many assignment upload attempts are allowed?",
+    "ground_truth": null,
+    "expected_pages": [22, 23]
+  },
+  {
+    "question": "What file format must assignments be submitted in?",
+    "ground_truth": null,
+    "expected_pages": [21]
+  },
+  {
+    "question": "What is the maximum file size for assignment submission?",
+    "ground_truth": null,
+    "expected_pages": [21]
+  },
+  {
+    "question": "Can handwritten assignments be submitted?",
+    "ground_truth": null,
+    "expected_pages": [21]
+  },
+  {
+    "question": "What is the passing criterion for a subject?",
+    "ground_truth": null,
+    "expected_pages": [29, 30]
+  },
+  {
+    "question": "Can students improve marks after passing a subject?",
+    "ground_truth": null,
+    "expected_pages": [26, 30]
+  },
+  {
+    "question": "What is the Grace Rule?",
+    "ground_truth": null,
+    "expected_pages": [31]
+  },
+  {
+    "question": "When are regular Term End Examinations conducted?",
+    "ground_truth": null,
+    "expected_pages": [25, 26]
+  },
+  {
+    "question": "When are Re-Sit examinations conducted?",
+    "ground_truth": null,
+    "expected_pages": [31, 32, 33]
+  },
+  {
+    "question": "Who is eligible for Re-Sit examinations?",
+    "ground_truth": null,
+    "expected_pages": [32, 33]
+  },
+  {
+    "question": "How long is the computer-based examination?",
+    "ground_truth": null,
+    "expected_pages": [28]
+  },
+  {
+    "question": "What is the pattern of the computer-based examination?",
+    "ground_truth": null,
+    "expected_pages": [28]
+  },
+  {
+    "question": "How many MCQs are there in the exam?",
+    "ground_truth": null,
+    "expected_pages": [28]
+  },
+  {
+    "question": "What items are prohibited inside the examination hall?",
+    "ground_truth": null,
+    "expected_pages": [35, 36, 37]
+  },
+  {
+    "question": "What happens if a student is caught using unfair means?",
+    "ground_truth": null,
+    "expected_pages": [39, 40]
+  },
+  {
+    "question": "How can students apply for revaluation?",
+    "ground_truth": null,
+    "expected_pages": [40, 41, 42]
+  },
+  {
+    "question": "Under what condition is the revaluation fee refunded?",
+    "ground_truth": null,
+    "expected_pages": [41, 42, 43]
+  },
+  {
+    "question": "How can students obtain duplicate marksheets?",
+    "ground_truth": null,
+    "expected_pages": [44]
+  },
+  {
+    "question": "How much does a transcript cost?",
+    "ground_truth": null,
+    "expected_pages": [44, 45]
+  },
+  {
+    "question": "What are the eligibility criteria for placement activities?",
+    "ground_truth": null,
+    "expected_pages": [45, 46]
+  },
+  {
+    "question": "How many interview opportunities are provided during placements?",
+    "ground_truth": null,
+    "expected_pages": [46]
+  },
+  {
+    "question": "What happens after receiving a job offer?",
+    "ground_truth": null,
+    "expected_pages": [46]
+  },
+  {
+    "question": "Explain the complete admission process from registration until receiving the study kit.",
+    "ground_truth": null,
+    "expected_pages": [7, 8, 9, 10, 11]
+  },
+  {
+    "question": "Describe the complete Internal Assignment submission workflow.",
+    "ground_truth": null,
+    "expected_pages": [19, 20, 21, 22, 23, 24]
+  },
+  {
+    "question": "Explain the complete examination process from exam registration to result declaration.",
+    "ground_truth": null,
+    "expected_pages": [26, 27, 28, 29, 30, 31, 40]
+  },
+  {
+    "question": "Summarize all plagiarism rules mentioned in the handbook.",
+    "ground_truth": null,
+    "expected_pages": [22, 24, 29, 30, 39, 40]
+  },
+  {
+    "question": "Explain how a student can fail even after scoring 50 marks in total.",
+    "ground_truth": null,
+    "expected_pages": [29, 30]
+  },
+  {
+    "question": "Compare Regular Term End Examinations and Re-Sit Examinations.",
+    "ground_truth": null,
+    "expected_pages": [26, 31, 32, 33]
+  },
+  {
+    "question": "Describe all facilities available through the Student Zone.",
+    "ground_truth": null,
+    "expected_pages": [16, 17, 18, 19]
+  },
+  {
+    "question": "What are all the situations in which a student's result may be kept on hold?",
+    "ground_truth": null,
+    "expected_pages": [8, 19, 26, 30]
+  },
+  {
+    "question": "Explain the complete passing criteria, including grace marks and plagiarism cases.",
+    "ground_truth": null,
+    "expected_pages": [29, 30, 31]
+  },
+  {
+    "question": "Summarize all examination hall rules and unfair means policies.",
+    "ground_truth": null,
+    "expected_pages": [35, 36, 37, 38, 39, 40]
   }
 ]

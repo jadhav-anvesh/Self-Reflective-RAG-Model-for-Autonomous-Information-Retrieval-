@@ -119,8 +119,8 @@ def run_ingestion() -> None:
         vectorstore = load_vectorstore()
         add_documents(vectorstore, new_chunks)
     else:
-        # First-run path: no vector store yet, create it from scratch.
-        vectorstore = create_vectorstore(new_chunks)
+        # First run → create a new vector store
+        create_vectorstore(new_chunks)
 
     save_manifest(config.manifest_path, manifest)
 

@@ -41,7 +41,10 @@ def _load_cross_encoder(model_name: str):
     from sentence_transformers import CrossEncoder
 
     logger.info("Loading cross-encoder reranker model: %s", model_name)
-    return CrossEncoder(model_name)
+    return CrossEncoder(
+        model_name,
+        device=config.embedding_device,
+    )
 
 
 class CrossEncoderReranker(BaseRetriever):

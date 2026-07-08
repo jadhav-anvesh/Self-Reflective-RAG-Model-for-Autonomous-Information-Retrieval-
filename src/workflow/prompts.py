@@ -6,6 +6,8 @@ in `graph.py` and `nodes.py`.
 """
 from __future__ import annotations
 
+from typing import Literal
+
 from langchain import hub
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -23,25 +25,35 @@ from src.workflow.query_cleaning import clean_rewritten_question
 class GradeDocuments(BaseModel):
     """Binary score for relevance check on retrieved documents."""
 
-    binary_score: str = Field(description="Documents are relevant to the question, 'yes' or 'no'")
+    binary_score: Literal["yes", "no"] = Field(description="Documents are relevant to the question")
 
 
 class GradeHallucinations(BaseModel):
     """Binary score for hallucination present in generation answer."""
 
-    binary_score: str = Field(description="Answer is grounded in the facts, 'yes' or 'no'")
+    binary_score: Literal["yes", "no"] = Field(description="Answer is grounded in the facts")
 
 
 class GradeAnswer(BaseModel):
     """Binary score to assess whether an answer addresses a question."""
 
-    binary_score: str = Field(description="Answer addresses the question, 'yes' or 'no'")
+    binary_score: Literal["yes", "no"] = Field(description="Answer addresses the question")
 
 
 # ---------------------------------------------------------------------------
 # LLM (single shared instance, configured via config.py)
 # ---------------------------------------------------------------------------
-llm = ChatOllama(model=config.llm_model, temperature=config.llm_temperature)
+# `request_timeout` is NOT a real ChatOllama field -- it was silently ignored
+# (model_config = {'extra': 'ignore', ...}), so no client-side timeout was
+# ever actually applied. `client_kwargs={"timeout": ...}` is the real,
+# verified field name (passed through to httpx). `num_predict` caps worst-case
+# generation length as defense-in-depth on top of the enum-constrained
+# grading schemas above -- neither alone is a substitute for the other.
+llm = ChatOllama(
+    model=config.llm_model,
+    temperature=config.llm_temperature,
+    client_kwargs={"timeout": 60},
+)
 
 # ---------------------------------------------------------------------------
 # Retrieval grader: is a retrieved chunk relevant to the question?
@@ -67,8 +79,26 @@ rag_chain = rag_prompt | llm | StrOutputParser()
 # ---------------------------------------------------------------------------
 # Hallucination grader: is the generation grounded in retrieved documents?
 # ---------------------------------------------------------------------------
-_hallucination_grader_system = """You are a grader assessing whether an LLM generation is grounded in / supported by a set of retrieved facts. \n
-     Give a binary score 'yes' or 'no'. 'Yes' means that the answer is grounded in / supported by the set of facts."""
+_hallucination_grader_system = """Return "yes" if every important claim in the answer is supported by one or more retrieved documents.
+
+Accept:
+- paraphrasing
+- summarization
+- combining information from multiple retrieved documents
+
+Do NOT require the answer to exactly match the document wording.
+
+Return "no" only if the answer:
+- introduces unsupported facts
+- invents numbers, policies, or entities
+- contradicts the retrieved documents
+
+If the answer is conservative or omits some details, but everything it states is supported, return "yes".
+
+Return exactly one lowercase word:
+yes
+or
+no"""
 _hallucination_grader_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", _hallucination_grader_system),
@@ -76,12 +106,27 @@ _hallucination_grader_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 hallucination_grader = _hallucination_grader_prompt | llm.with_structured_output(GradeHallucinations)
+# hallucination_grader = (
+#     _hallucination_grader_prompt
+#     | llm
+#     | StrOutputParser()
+# )
 
 # ---------------------------------------------------------------------------
 # Answer grader: does the generation actually answer the question?
 # ---------------------------------------------------------------------------
-_answer_grader_system = """You are a grader assessing whether an answer addresses / resolves a question \n
-     Give a binary score 'yes' or 'no'. 'Yes' means that the answer resolves the question."""
+_answer_grader_system = """Return yes if the answer directly addresses the user's question, even if concise.
+
+Return no only if
+
+- unrelated
+- incomplete
+- refuses without reason
+
+Do not reject because wording differs.
+
+Only output yes or no.
+Use lowercase only."""
 _answer_grader_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", _answer_grader_system),

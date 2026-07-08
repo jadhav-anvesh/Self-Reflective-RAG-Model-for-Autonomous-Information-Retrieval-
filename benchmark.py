@@ -146,7 +146,7 @@ def run_config(
             embeddings = HuggingFaceEmbeddings(
                 model_name=embedding_model,
                 model_kwargs={"device": config.embedding_device},
-                encode_kwargs={"normalize_embeddings": True},
+                encode_kwargs={"normalize_embeddings": True, "batch_size": 64},
             )
             # Built directly (not via src.indexing.vectorstore.create_vectorstore)
             # so each grid point actually uses ITS OWN embedding model -- routing
@@ -266,7 +266,7 @@ def plot_results(results: List[BenchmarkResult], x_field: str, y_fields: List[st
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Benchmark chunk sizes / embedding models for the RAG pipeline.")
-    parser.add_argument("--chunk-sizes", type=int, nargs="*", default=[200, 400, 800])
+    parser.add_argument("--chunk-sizes", type=int, nargs="*", default=[150, 200, 250, 300, 350, 400, 500, 600, 800])
     parser.add_argument("--embedding-models", type=str, nargs="*", default=[config.embedding_model])
     parser.add_argument("--questions", default="data/eval/questions.json")
     parser.add_argument("--out-dir", default="results")
@@ -287,7 +287,7 @@ def main() -> None:
     plot_results(
         chunk_size_results,
         x_field="chunk_size",
-        y_fields=["avg_retrieval_latency_ms", "avg_generation_latency_ms"],
+        y_fields=["avg_retrieval_latency_ms", "avg_generation_latency_ms", "avg_workflow_latency_ms"],
         out_path=f"{args.out_dir}/plots/chunk_size_vs_latency.png",
     )
     plot_results(
@@ -295,6 +295,18 @@ def main() -> None:
         x_field="chunk_size",
         y_fields=["avg_page_recall"],
         out_path=f"{args.out_dir}/plots/chunk_size_vs_page_recall.png",
+    )
+    plot_results(
+        chunk_size_results,
+        x_field="chunk_size",
+        y_fields=["num_chunks"],
+        out_path=f"{args.out_dir}/plots/chunk_size_vs_num_chunks.png",
+    )
+    plot_results(
+        chunk_size_results,
+        x_field="chunk_size",
+        y_fields=["ingest_time_s"],
+        out_path=f"{args.out_dir}/plots/chunk_size_vs_ingestion_time.png",
     )
 
     # --- Embedding model sweep (chunk size held fixed), only if >1 given ------

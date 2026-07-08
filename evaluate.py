@@ -127,9 +127,20 @@ def main() -> None:
         "config": {
             "llm_model": config.llm_model,
             "embedding_model": config.embedding_model,
+
+            "chunk_size": config.chunk_size,
+            "chunk_overlap": config.chunk_overlap,
+
+            "retrieval_k": config.retrieval_k,
+            "hybrid_candidate_k": config.hybrid_candidate_k,
+
             "use_hybrid_retrieval": config.use_hybrid_retrieval,
+
             "use_reranking": config.use_reranking,
-        },
+            "reranker_model": config.reranker_model,
+            "rerank_candidate_k": config.rerank_candidate_k,
+            "rerank_k": config.rerank_k,
+        }
     }
 
     summary_path = Path(args.summary_out)
